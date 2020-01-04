@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="aa43f421af594055af8f446a2ad59553" Name="Diagram1" ZoomLevel="55">
+        <EntityTypeShape EntityType="ABCLogisticsEMP_dbModel.C__MigrationHistory" Width="1.5" PointX="0.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ABCLogisticsEMP_dbModel.AspNetRole" Width="1.5" PointX="0.75" PointY="2.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ABCLogisticsEMP_dbModel.AspNetUserClaim" Width="2.5" PointX="5.25" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="ABCLogisticsEMP_dbModel.AspNetUserLogin" Width="2.5" PointX="5.25" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ABCLogisticsEMP_dbModel.AspNetUser" Width="1.5" PointX="3" PointY="1.375" IsExpanded="true" />
+        <AssociationConnector Association="ABCLogisticsEMP_dbModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
+        <AssociationConnector Association="ABCLogisticsEMP_dbModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
+        <AssociationConnector Association="ABCLogisticsEMP_dbModel.AspNetUserRoles" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="ABCLogisticsEMP_dbModel.Bank" Width="1.5" PointX="7.875" PointY="7.75" />
+        <EntityTypeShape EntityType="ABCLogisticsEMP_dbModel.Department" Width="1.5" PointX="3.375" PointY="8.125" />
+        <EntityTypeShape EntityType="ABCLogisticsEMP_dbModel.Employee" Width="1.5" PointX="5.625" PointY="7" />
+        <EntityTypeShape EntityType="ABCLogisticsEMP_dbModel.Level" Width="1.5" PointX="3.375" PointY="11.125" />
+        <AssociationConnector Association="ABCLogisticsEMP_dbModel.FK_BankEmployee" />
+        <AssociationConnector Association="ABCLogisticsEMP_dbModel.FK_EmployeeDepartment" />
+        <AssociationConnector Association="ABCLogisticsEMP_dbModel.FK_EmployeeLevels" />
+        <AssociationConnector Association="ABCLogisticsEMP_dbModel.FK_EmployeeEmployee" />
+        </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
