@@ -11,15 +11,24 @@ namespace ABCLogisticsEMP.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+
     public partial class Bank
     {
         public int Id { get; set; }
         public int Employees_Id { get; set; }
         public string Name { get; set; }
+        [CustomAccountNumberValidator]
         public string AccountNumber { get; set; }
+        [NotMapped] // Does not effect with your database
+        [CompareAttribute("AccountNumber", ErrorMessage = "AccountNumber doesn't match.")]
+        public string ConfirmAccountNumber { get; set; }
         public string RoutingNumber { get; set; }
-    
+        [NotMapped] // Does not effect with your database
+        [CompareAttribute("RoutingNumber", ErrorMessage = "RoutingNumber doesn't match.")]
+        public string ConfirmRoutingNumber { get; set; }
+
         public virtual Employee Employee { get; set; }
     }
 }

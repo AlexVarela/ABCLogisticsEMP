@@ -48,7 +48,7 @@ namespace ABCLogisticsEMP.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Employees_Id,Name,AccountNumber,RoutingNumber")] Bank bank)
+        public ActionResult Create([Bind(Include = "Id,Employees_Id,Name,AccountNumber,ConfirmAccountNumber,RoutingNumber,ConfirmRoutingNumber")] Bank bank)
         {
             if (ModelState.IsValid)
             {

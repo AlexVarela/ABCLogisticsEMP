@@ -3,14 +3,47 @@
 @{
     ViewBag.Title = "Edit";
 }
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+<script language="javascript" type="text/javascript">
+    function GetSupervisor(_departmentId) {
+        var procemessage = "<option value='0'> Please wait...</option>";
+		$("#ddlsupervisor").html(procemessage).show();
 
+		//var url = "Url.Action(GetSupervisorByDepartment)"
+		var url = "@Url.Action("GetSupervisorByDepartment","Employees")";
+        //var url = "/GetSupervisorByDepartment/"
+
+        $.ajax({
+            url: url,
+            data: { departmentid: _departmentId },
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                var markup = "<option value='0'>No Supervisor</option>";
+                for (var x = 0; x < data.length; x++) {
+                    markup += "<option value=" + data[x].Value + ">" + data[x].Text + "</option>";
+                }
+				$("#ddlsupervisor").html(markup).show();
+				$("#ddlsupervisor").prop('disabled', false);
+                $("#ddlsupervisor").removeAttr('disabled');
+            },
+            error: function (reponse) {
+                alert("error : " + reponse);
+            }
+        });
+
+	}
+
+	$("#ddlsupervisor").prop('disabled', true);
+    $("#ddlsupervisor").attr('disabled','disabled');
+</script>
 <h2>Edit</h2>
 
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>Employee</h4>
         <hr />
@@ -84,7 +117,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Departments_Id, "Departments_Id", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("Departments_Id", null, htmlAttributes: new { @class = "form-control" })
+                @Html.DropDownList("Departments_Id", null, htmlAttributes: new { @class = "form-control", @id = "ddldepartment", @onchange = "javascript:GetSupervisor(this.value);" })
                 @Html.ValidationMessageFor(model => model.Departments_Id, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -93,11 +126,11 @@
             @Html.Label("Supervisor", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
 
-                @Html.DropDownListFor(model => model.Employee1_Id, (SelectList)ViewBag.Supervisor_Id, "")
+                @Html.DropDownListFor(model => model.Employee1_Id, (SelectList)ViewBag.Supervisor_Id, new { @id = "ddlsupervisor", @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.Employee1_Id, "", new { @class = "text-danger" })
             </div>
         </div>
-
+        @Html.Label((String)ViewBag.ErrorMessage, new { @class = "text-danger" });
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" />

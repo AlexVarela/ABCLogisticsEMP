@@ -41,7 +41,9 @@ namespace ABCLogisticsEMP.Controllers
         {
             ViewBag.Departments_Id = new SelectList(db.Departments, "Id", "Name");
             ViewBag.Levels_Id = new SelectList(db.Levels, "Id", "Name");
-            ViewBag.Supervisor_Id = new SelectList(db.Employees.Where(x => x.Level.Name == "Supervisor"), "Id", "Name");
+            
+            ViewBag.Supervisor_Id = new SelectList(db.Employees.Where(x => x.Level.Name == "fake"), "Id", "Name");
+            ViewBag.ErrorMessage = "";
             return View();
         }
 
@@ -52,7 +54,18 @@ namespace ABCLogisticsEMP.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Name,LastName,SSN,Address,Phone,Email,Title,Levels_Id,Departments_Id,Employee1_Id")] Employee employee)
         {
-            if (ModelState.IsValid)
+            ViewBag.ErrorMessage = "";
+            bool isValid = true;
+            if (employee.Levels_Id != 5)
+            {
+                if (employee.Employee1_Id == null || employee.Employee1_Id == 0)
+                {
+                    isValid = false;
+                    ViewBag.ErrorMessage = "Non supervisors must have one";
+                } 
+            }
+
+            if (ModelState.IsValid && isValid)
             {
                
 
@@ -60,6 +73,10 @@ namespace ABCLogisticsEMP.Controllers
                 Level lev = db.Levels.Find(employee.Levels_Id);
 
                 employee.Title = dept.Name + " " + lev.Name + " Associate";
+                if (employee.Employee1_Id == 0)
+                {
+                    employee.Employee1_Id = null;
+                }
 
                 db.Employees.Add(employee);
                 db.SaveChanges();
@@ -68,7 +85,8 @@ namespace ABCLogisticsEMP.Controllers
 
             ViewBag.Departments_Id = new SelectList(db.Departments, "Id", "Name", employee.Departments_Id);
             ViewBag.Levels_Id = new SelectList(db.Levels, "Id", "Name", employee.Levels_Id);
-            ViewBag.Supervisor_Id = new SelectList(db.Employees.Where(x => x.Level.Name == "Supervisor"), "Id", "Name");
+            ViewBag.Supervisor_Id = new SelectList(db.Employees.Where(x => x.Level.Name == "Supervisor" && x.Departments_Id == employee.Departments_Id), "Id", "Name");
+            
             return View(employee);
         }
 
@@ -86,6 +104,8 @@ namespace ABCLogisticsEMP.Controllers
             }
             ViewBag.Departments_Id = new SelectList(db.Departments, "Id", "Name", employee.Departments_Id);
             ViewBag.Levels_Id = new SelectList(db.Levels, "Id", "Name", employee.Levels_Id);
+            ViewBag.Supervisor_Id = new SelectList(db.Employees.Where(x => x.Id == employee.Employee1_Id), "Id", "Name");
+            ViewBag.ErrorMessage = "";
             return View(employee);
         }
 
@@ -96,15 +116,32 @@ namespace ABCLogisticsEMP.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Name,LastName,SSN,Address,Phone,Email,Title,Levels_Id,Departments_Id,Employee1_Id")] Employee employee)
         {
-            if (ModelState.IsValid)
+            ViewBag.ErrorMessage = "";
+            bool isValid = true;
+            if (employee.Levels_Id != 5)
             {
+                if (employee.Employee1_Id == null || employee.Employee1_Id == 0)
+                {
+                    isValid = false;
+                    ViewBag.ErrorMessage = "Non supervisors must have one";
+                }
+            }
+
+            if (ModelState.IsValid && isValid)
+            {
+
+                if (employee.Employee1_Id == 0)
+                {
+                    employee.Employee1_Id = null;
+                }
+
                 db.Entry(employee).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
             ViewBag.Departments_Id = new SelectList(db.Departments, "Id", "Name", employee.Departments_Id);
             ViewBag.Levels_Id = new SelectList(db.Levels, "Id", "Name", employee.Levels_Id);
-            ViewBag.Supervisor_Id = new SelectList(db.Employees.Where(x => x.Level.Name == "Supervisor"), "Id", "Name");
+            ViewBag.Supervisor_Id = new SelectList(db.Employees.Where(x => x.Level.Name == "Supervisor" && x.Departments_Id == employee.Departments_Id), "Id", "Name");
             return View(employee);
         }
 
@@ -131,7 +168,9 @@ namespace ABCLogisticsEMP.Controllers
         {
             Employee employee = db.Employees.Find(id);
 
-            foreach (Bank bid in employee.Banks)
+            List<Bank> bankList = employee.Banks.ToList();
+
+            foreach (Bank bid in bankList)
             {
 
                 db.Banks.Remove(bid);
@@ -151,6 +190,21 @@ namespace ABCLogisticsEMP.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+
+        //Action result for ajax call
+        [HttpPost]
+        public ActionResult GetSupervisorByDepartment(int departmentid)
+        {
+            var Supervisors =  db.Employees.Where(x => x.Level.Name == "Supervisor" && x.Departments_Id == departmentid).Select(x => new
+            {
+                Value = x.Id,
+                Text = x.Name + " " + x.LastName
+            }).ToList();
+
+            return Json(Supervisors);
+
         }
     }
 }
